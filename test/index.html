@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>traverse-object</title>
+    <link rel="stylesheet" href="../build/build.css">
+  </head>
+  <body>
+    <script src="../build/build.js"></script>
+    <script>
+
+    var traverse = require('traverse-object');
+
+    // actors
+
+    var obj, expect, real;
+
+    // begin tests
+
+    document.write('traverse.depth()');
+
+    obj = {
+      a: { b: 'foo' },
+      c: 'bar'
+    };
+    expect = 'a,b,c';
+    real = [];
+    traverse.depth(obj, function(key, item) {
+      assert('string' == typeof key);
+      assert(null != item)
+      real.push(key);
+    });
+    assert(expect == real, 'ok');
+
+    //
+
+    document.write('traverse.depth() prevent cyclic');
+
+    obj = {
+      a: { b: null },
+      c: 'bar'
+    };
+    obj.a.b = obj;
+    expect = 'a,b,c';
+    real = [];
+    traverse.depth(obj, function(key, item) {
+      real.push(key);
+    });
+    assert(expect == real, 'ok');
+
+    //
+
+    document.write('traverse.breadth()');
+
+    obj = {
+      a: { c: 'foo' },
+      b: 'bar'
+    };
+    expect = 'a,b,c';
+    real = [];
+    traverse.breadth(obj, function(key, item) {
+      assert('string' == typeof key);
+      assert(null != item)
+      real.push(key);
+    });
+    assert(expect == real, 'ok');
+
+    //
+
+    document.write('traverse.breadth() prevent cyclic');
+
+    obj = {
+      a: { c: 'foo' },
+      b: 'bar'
+    };
+    obj.a.c = obj;
+    expect = 'a,b,c';
+    real = [];
+    traverse.breadth(obj, function(key, item) {
+      real.push(key);
+    });
+    assert(expect == real, 'ok');
+
+    //
+
+    document.write('traverse.filter().depth()');
+
+    obj = {
+      a: { b: 'foo', _c: { d: 'never' } },
+      c: 'bar'
+    };
+    expect = 'a,b,c';
+    real = [];
+    traverse
+    .filter(function(key) { return '_' != key[0]; })
+    .depth(obj, function(key, item) {
+      real.push(key);
+    });
+    assert(expect == real, 'ok');
+
+    //
+
+    document.write('traverse.filter().breadth()');
+
+    obj = {
+      a: { c: 'foo', _d: { e: 'never' } },
+      b: 'bar'
+    };
+    expect = 'a,b,c';
+    real = [];
+    traverse
+    .filter(function(key) { return '_' != key[0]; })
+    .breadth(obj, function(key, item) {
+      real.push(key);
+    });
+    assert(expect == real, 'ok');
+
+    //
+
+    document.write('traverse.filter().filter().depth()');
+
+    obj = {
+      a: { b: 'foo', _c: { d: 'never' }, $e: 'not here' },
+      c: 'bar'
+    };
+    expect = 'a,b,c';
+    real = [];
+    traverse
+    .filter(function(key) { return '_' != key[0]; })
+    .filter(function(key) { return '$' != key[0]; })
+    .depth(obj, function(key, item) {
+      real.push(key);
+    });
+    assert(expect == real, 'ok');
+
+    // end tests
+
+    function assert(expr, msg) {
+      if (!expr) {
+        document.write(' failed');
+        throw new Error('failed');
+      }
+      else msg && document.write(' ' + msg + '<br>');
+    }
+
+    </script>
+  </body>
+</html>
