@@ -66,6 +66,38 @@
 
     //
 
+    document.write('traverse.breadth() deep');
+
+    obj = {
+      a: {
+        c: {
+          f: {
+            h: 1,
+            i: 1
+          }
+        }
+      },
+      b: {
+        d: 1,
+        e: {
+          g: {
+            j: 1,
+            k: 1
+          }
+        }
+      }
+    };
+    expect = 'a,b,c,d,e,f,g,h,i,j,k';
+    real = [];
+    traverse.breadth(obj, function(key, item) {
+      assert('string' == typeof key);
+      assert(null != item)
+      real.push(key);
+    });
+    assert(expect == real, 'ok');
+
+    //
+
     document.write('traverse.breadth() prevent cyclic');
 
     obj = {

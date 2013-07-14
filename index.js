@@ -85,9 +85,13 @@ function iterator(method) {
    * @api public
    */
 
-  return function runner(target, fn, filter, visited) {
-    var nodes = isBreadth && [],
-        filters = this.filters;
+  return function runner(target, fn, filter, visited, queue, flush) {
+    if (isBreadth && !queue) {
+      queue = [];
+      flush = true;
+    }
+
+    var filters = this.filters;
 
     if (filters) {
       if (filter) filters = filters.concat([filter]);
@@ -109,15 +113,21 @@ function iterator(method) {
         if ('object' == type(item)
         && !~indexof(visited, item)
         ) {
-          if (isBreadth) nodes.push(item);
+          if (isBreadth) queue.push(item);
           else runner.call(this, item, fn, null, visited);
         }
       }
     }
 
-    if (nodes) {
-      for (var i = 0; i < nodes.length; i++) {
-        runner.call(this, nodes[i], fn, null, visited);
+    if (flush && queue) {
+      var c = queue.slice(),
+          len = c.length,
+          last = len - 1;
+
+      queue = [];
+
+      for (var i = 0; i < len; i++) {
+        runner.call(this, c[i], fn, null, visited, queue, last == i);
       }
     }
   };
