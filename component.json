@@ -1,6 +1,6 @@
 {
   "name": "traverse-object",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "breadth & depth first object traversal",
   "keywords": ["object","traversal","traverse","iterate","breadth","depth"],
   "author": "stagas <gstagas@gmail.com>",
