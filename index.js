@@ -108,7 +108,7 @@ function iterator(method) {
       var item = target[key];
 
       if (filter(key, item)) {
-        fn(key, item);
+        fn.call(target, key, item);
 
         if ('object' == type(item)
         && !~indexof(visited, item)
